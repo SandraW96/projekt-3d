@@ -1,9 +1,36 @@
-﻿using System.Collections;
+﻿
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameMenager : MonoBehaviour
 {
+
+    public int points = 0;
+
+    public void AddPoints(int point)
+    {
+        points += point;
+    }
+
+    public void AddTime(int addTime)
+    {
+        timeToEnd += addTime;
+    }
+
+    public void FreezTime(int freez)
+    {
+        CancelInvoke("Stopper");
+        InvokeRepeating("Stopper", freez, 5);
+    }
+
+
+    public int redKey = 0;
+    public int greenKey = 0;
+    public int goldkey = 0;
+
+
     void Stopper()
     {
         timeToEnd--;
@@ -44,6 +71,22 @@ public class GameMenager : MonoBehaviour
             Debug.Log("You Lose!");
     }
 
+    public void AddKey(KeyColor color)
+    {
+        if (color == KeyColor.Gold)
+        {
+            goldkey++;
+        }
+        else if(color == KeyColor.Green)
+        {
+            greenKey++;
+        }
+        else if (color == KeyColor.Red)
+        {
+            redKey++;
+        }
+    }
+
 
 
 
@@ -78,6 +121,14 @@ public class GameMenager : MonoBehaviour
                 }
             else { PauseGame(); }
         }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Debug.Log("Time: " + timeToEnd);
+            Debug.Log("Key red: " + redKey + "green: " + greenKey + "gold: " + goldkey);
+            Debug.Log("Points: " + points);
+        }
+
         
     }
 }
