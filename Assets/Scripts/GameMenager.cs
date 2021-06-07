@@ -6,8 +6,13 @@ using UnityEngine;
 
 public class GameMenager : MonoBehaviour
 {
+    AudioSource audioSource;
 
     public int points = 0;
+
+    public MusicScript musicScript;
+
+    bool lessTime = false;
 
     public void AddPoints(int point)
     {
@@ -47,18 +52,34 @@ public class GameMenager : MonoBehaviour
         {
             EndGame();
         }
+
+        if (timeToEnd<20 && !lessTime)
+        {
+            LessTimeOn();
+            lessTime = true;
+        }
+
+        if (timeToEnd > 20 && lessTime)
+        {
+            LessTimeOff();
+            lessTime = false;
+        }
     }
     public void PauseGame()
     {
+        PlayClip(pauseGame);
         Debug.Log("Pause Game");
         Time.timeScale = 0f;
         gamePaused = true;
+        musicScript.OnPauseGame();
     }
     public void ResumeGame()
     {
+        PlayClip(resumeGame);
         Debug.Log("Resume Game");
         Time.timeScale = 1f;
         gamePaused = false;
+        musicScript.OnResumeGame();
     }
     public void EndGame()
     {
@@ -66,9 +87,21 @@ public class GameMenager : MonoBehaviour
         if (win)
         {
             Debug.Log("You win!");
+            PlayClip(winClip);
         }
         else
+            PlayClip(loseClip);
             Debug.Log("You Lose!");
+    }
+
+    public void LessTimeOn()
+    {
+        musicScript.PitchThis(1.5f);
+    }
+
+    public void LessTimeOff()
+    {
+        musicScript.PitchThis(1f);
     }
 
     public void AddKey(KeyColor color)
@@ -87,7 +120,16 @@ public class GameMenager : MonoBehaviour
         }
     }
 
+    public void PlayClip(AudioClip playClip)
+    {
+        audioSource.clip = playClip;
+        audioSource.Play();
+    }
 
+    public AudioClip resumeGame;
+    public AudioClip pauseGame;
+    public AudioClip winClip;
+    public AudioClip loseClip;
 
 
     public static GameMenager gameMenager;
@@ -108,6 +150,8 @@ public class GameMenager : MonoBehaviour
         }
         Debug.Log("Time " + timeToEnd + "s");
         InvokeRepeating("Stopper", 2, 1);
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame

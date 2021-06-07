@@ -11,6 +11,10 @@ public class Lock : MonoBehaviour
     bool locked = false;
     Animator key;
 
+    public Material red;
+    public Material gold;
+    public Material green;
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -69,6 +73,28 @@ public class Lock : MonoBehaviour
     void Start()
     {
         key = GetComponent<Animator>();
+    }
+
+    public Renderer myLock;
+
+    void SetMyColor()
+    {
+        switch (myColor)
+        {
+            case KeyColor.Red:
+                GetComponent<Renderer>().material = red;
+                myLock.material = red;
+                break;
+            case KeyColor.Gold:
+                GetComponent<Renderer>().material = gold;
+                myLock.material = gold;
+                break;
+            case KeyColor.Green:
+                GetComponent<Renderer>().material = green;
+                myLock.material = green;
+                break;
+
+        }
     }
 
     // Update is called once per frame
