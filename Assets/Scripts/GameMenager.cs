@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMenager : MonoBehaviour
 {
@@ -14,19 +15,33 @@ public class GameMenager : MonoBehaviour
 
     bool lessTime = false;
 
+    public Text clockText;
+    public Text diamondText;
+    public Image freezeTime;
+
+    public GameObject infoPanel;
+    public Text pauseEnd;
+    public Text reloadInfo;
+    public Text useInfo;
+
+
+
     public void AddPoints(int point)
     {
         points += point;
+        diamondText.text = points.ToString();
     }
 
     public void AddTime(int addTime)
     {
         timeToEnd += addTime;
+        clockText.text = timeToEnd.ToString();
     }
 
     public void FreezTime(int freez)
     {
         CancelInvoke("Stopper");
+        freezeTime.enabled = true;
         InvokeRepeating("Stopper", freez, 5);
     }
 
@@ -39,6 +54,8 @@ public class GameMenager : MonoBehaviour
     void Stopper()
     {
         timeToEnd--;
+        clockText.text = timeToEnd.ToString();
+        freezeTime.enabled = false;
         Debug.Log("Time: " + timeToEnd + "s");
 
         if (timeToEnd <= 0)
@@ -68,6 +85,7 @@ public class GameMenager : MonoBehaviour
     public void PauseGame()
     {
         PlayClip(pauseGame);
+        infoPanel.SetActive(true);
         Debug.Log("Pause Game");
         Time.timeScale = 0f;
         gamePaused = true;
@@ -76,6 +94,7 @@ public class GameMenager : MonoBehaviour
     public void ResumeGame()
     {
         PlayClip(resumeGame);
+        infoPanel.SetActive(false);
         Debug.Log("Resume Game");
         Time.timeScale = 1f;
         gamePaused = false;
@@ -84,14 +103,23 @@ public class GameMenager : MonoBehaviour
     public void EndGame()
     {
         CancelInvoke("Stopper");
+        infoPanel.SetActive(true);
+        Time.timeScale = 0f;
+        gamePaused = true;
         if (win)
         {
-            Debug.Log("You win!");
+            pauseEnd.text = "You Win!";
+            reloadInfo.text = "Realod? Y/N";
             PlayClip(winClip);
         }
         else
+        {
             PlayClip(loseClip);
-            Debug.Log("You Lose!");
+            pauseEnd.text = "You Lose!";
+            reloadInfo.text = "Reload? Y/N";
+        }
+            
+            
     }
 
     public void LessTimeOn()
@@ -152,6 +180,13 @@ public class GameMenager : MonoBehaviour
         InvokeRepeating("Stopper", 2, 1);
 
         audioSource = GetComponent<AudioSource>();
+
+        freezeTime.enabled = false;
+        clockText.text = timeToEnd.ToString();
+        infoPanel.SetActive(false);
+        pauseEnd.text = "Pause";
+        reloadInfo.text = "";
+        
     }
 
     // Update is called once per frame
